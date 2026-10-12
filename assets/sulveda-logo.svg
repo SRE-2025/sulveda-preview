@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 74" role="img" aria-labelledby="title">
+  <title id="title">Sulveda Daily Gut Mints</title>
+  <g fill="none" stroke="#1d8e82" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M31 31C18 25 16 13 16 7c10 3 17 10 18 21-1 5-1 8-1 11"/>
+    <path d="M36 24C36 13 43 5 52 1c1 10-3 20-15 27-2 4-3 7-4 11"/>
+    <path d="M37 34c7-10 16-13 26-12-2 11-10 19-24 19-3 3-5 6-6 9"/>
+  </g>
+  <text x="81" y="34" fill="#143b4e" font-family="Georgia, serif" font-size="25" letter-spacing="7">SULVEDA</text>
+  <text x="82" y="55" fill="#143b4e" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing="3">DAILY GUT MINTS</text>
+</svg>
