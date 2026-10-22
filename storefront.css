@@ -338,4 +338,3 @@
 @media (prefers-reduced-motion: reduce) {
   .storefront *, .storefront *::before, .storefront *::after { scroll-behavior: auto !important; }
 }
-
