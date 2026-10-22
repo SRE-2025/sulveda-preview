@@ -335,6 +335,101 @@
 @media (min-width: 561px) and (max-width: 720px) {
   body.storefront[data-page="home"] { padding-bottom: 65px; }
 }
+
+/* Benefits-led product story */
+.benefits-hero .shopfront-copy h1 { font-size: clamp(3.4rem,5vw,5.35rem); }
+.benefits-hero .shopfront-copy { padding-block: 58px; }
+.benefit-hero-actions { display: flex; flex-direction: column; align-items: start; gap: 18px; margin-top: 28px; }
+.benefit-hero-actions .button { min-width: 230px; }
+.benefit-shop-link { padding-bottom: 3px; color: rgba(255,255,255,.8); border-bottom: 1px solid rgba(255,255,255,.28); font-size: .75rem; font-weight: 700; }
+.benefits-hero .small-note { margin-top: 22px; }
+.benefit-overview { padding-block: 100px; }
+.benefit-section-heading { max-width: 780px; }
+.benefit-section-heading h2, .comparison-heading h2, .gut-science h2, .benefit-product h2 { margin-top: 19px; font-family: var(--serif); font-size: clamp(2.8rem,4.5vw,4.8rem); font-weight: 400; line-height: .96; letter-spacing: -.035em; }
+.benefit-section-heading h2 em, .comparison-heading h2 em, .benefit-product h2 em { color: var(--teal); font-weight: 400; }
+.benefit-section-heading > p:not(.eyebrow) { max-width: 640px; margin-top: 23px; color: var(--slate); font-size: .91rem; }
+.benefit-goals { display: grid; grid-template-columns: repeat(3,1fr); margin-top: 47px; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.benefit-goals article { padding: 27px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.benefit-goals article > span { color: var(--teal); font-size: .65rem; font-weight: 700; }
+.benefit-goals h3 { margin-top: 39px; font-family: var(--serif); font-size: 1.8rem; font-weight: 500; }
+.benefit-goals p { max-width: 310px; margin-top: 11px; color: var(--slate); font-size: .8rem; }
+.benefit-status { margin-top: 18px; color: var(--slate); font-size: .66rem; }
+.benefit-status a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
+.purpose-comparison { padding-block: 90px; background: #e8f1e9; }
+.comparison-heading { display: grid; grid-template-columns: 1fr .8fr; column-gap: 70px; align-items: end; }
+.comparison-heading > .eyebrow { grid-column: 1 / -1; }
+.comparison-heading > p:not(.eyebrow) { color: var(--slate); font-size: .88rem; }
+.comparison-table-wrap { margin-top: 44px; border: 1px solid rgba(20,59,78,.2); border-radius: 8px; overflow: hidden; }
+.purpose-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .81rem; line-height: 1.7; }
+.purpose-table th, .purpose-table td { padding: 21px 24px; text-align: left; vertical-align: top; border-right: 1px solid rgba(20,59,78,.13); border-bottom: 1px solid rgba(20,59,78,.13); }
+.purpose-table th:last-child, .purpose-table td:last-child { border-right: 0; }
+.purpose-table tr:last-child th, .purpose-table tr:last-child td { border-bottom: 0; }
+.purpose-table thead th { color: var(--navy); font-family: var(--serif); font-size: 1.6rem; font-weight: 500; background: #f7faf5; }
+.purpose-table thead th:first-child { width: 23%; font-family: var(--sans); font-size: .64rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.purpose-table thead span { display: block; margin-top: 5px; color: var(--slate); font-family: var(--sans); font-size: .65rem; font-weight: 400; }
+.purpose-table tbody th { font-size: .74rem; font-weight: 700; }
+.purpose-table td { color: var(--slate); }
+.purpose-table th:last-child, .purpose-table td:last-child { color: var(--white); background: var(--navy); }
+.purpose-table th:last-child span { color: var(--teal-light); }
+.purpose-table td:last-child { border-bottom-color: rgba(255,255,255,.15); }
+.comparison-note { max-width: 1000px; margin-top: 17px; color: var(--slate); font-size: .63rem; line-height: 1.8; }
+.comparison-note a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; }
+.gut-science { padding-block: 100px; color: #fff; background: var(--navy-dark); }
+.gut-science-layout { display: grid; grid-template-columns: 1fr .78fr; gap: 90px; align-items: center; }
+.gut-science h2 em { color: var(--teal-light); font-weight: 400; }
+.gut-science-layout > div > p:not(.eyebrow) { max-width: 570px; margin-top: 23px; color: rgba(255,255,255,.68); font-size: .88rem; }
+.science-purpose { padding: 33px; border: 1px solid rgba(113,200,187,.28); background: rgba(113,200,187,.05); border-radius: 8px; }
+.science-mark { display: block; margin-bottom: 28px; color: var(--teal-light); font-size: 2rem; }
+.science-purpose h3 { margin-top: 17px; font-family: var(--serif); font-size: 2.8rem; font-weight: 400; line-height: .97; }
+.science-purpose > p:not(.eyebrow) { margin-top: 17px; color: rgba(255,255,255,.65); font-size: .79rem; }
+.science-source { display: inline-block; margin-top: 30px; padding-bottom: 4px; color: var(--teal-light); border-bottom: 1px solid rgba(113,200,187,.4); font-size: .7rem; font-weight: 700; }
+.science-purpose small { display: block; margin-top: 13px; color: rgba(255,255,255,.5); font-size: .63rem; line-height: 1.7; }
+.benefit-product { display: grid; grid-template-columns: 1fr .7fr; gap: 100px; align-items: center; padding-block: 95px; }
+.benefit-product > div > p:not(.eyebrow) { max-width: 570px; margin-top: 22px; color: var(--slate); font-size: .88rem; }
+.benefit-product .button { margin-top: 28px; }
+.purpose-spec { margin: 0; border-top: 1px solid var(--line); }
+.purpose-spec div { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+.purpose-spec dt { color: var(--teal); font-size: .65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.purpose-spec dd { margin: 0; font-family: var(--serif); font-size: 1.8rem; }
+.benefit-faq { padding-top: 15px; }
+.product-benefit-link { margin-top: 18px; font-size: .7rem; }
+@media (max-width: 1000px) {
+  .gut-science-layout, .benefit-product { gap: 45px; }
+  .benefits-hero .shopfront-copy h1 { font-size: 3.5rem; }
+  .comparison-heading { column-gap: 35px; }
+}
+@media (max-width: 800px) {
+  .benefits-hero .shopfront-copy h1 { font-size: 3rem; }
+  .benefit-hero-actions .button { min-width: 0; font-size: .72rem; padding-inline: 16px; }
+  .benefit-overview, .purpose-comparison, .gut-science, .benefit-product { padding-block: 65px; }
+  .comparison-heading, .gut-science-layout, .benefit-product { grid-template-columns: 1fr; gap: 26px; }
+  .benefit-goals article { padding: 22px; }
+  .benefit-goals h3 { font-size: 1.6rem; }
+  .purpose-table th, .purpose-table td { padding: 18px; }
+  .purpose-table thead th { font-size: 1.4rem; }
+}
+@media (max-width: 560px) {
+  .benefits-hero .shopfront-copy { padding-block: 26px 35px; }
+  .benefits-hero .shopfront-copy h1 { font-size: 2.8rem; }
+  .benefits-hero .shopfront-intro { font-size: .8rem; }
+  .benefit-hero-actions { gap: 16px; margin-top: 20px; }
+  .benefit-hero-actions .button { width: 100%; font-size: .76rem; }
+  .benefit-goals { grid-template-columns: 1fr; margin-top: 30px; }
+  .benefit-goals h3 { margin-top: 20px; font-size: 1.8rem; }
+  .benefit-goals p { max-width: none; }
+  .benefit-section-heading h2, .comparison-heading h2, .gut-science h2, .benefit-product h2 { font-size: 2.8rem; }
+  .purpose-table th, .purpose-table td { padding: 13px 10px; font-size: .72rem; overflow-wrap: break-word; }
+  .purpose-table thead th { font-size: 1.1rem; }
+  .purpose-table thead th:first-child { width: 25%; font-size: .58rem; }
+  .purpose-table tbody th { font-size: .66rem; }
+  .purpose-table thead span { font-size: .54rem; }
+  .comparison-table-wrap { margin-top: 30px; }
+  .comparison-note { font-size: .59rem; }
+  .science-purpose { padding: 25px; }
+  .science-purpose h3 { font-size: 2.5rem; }
+  .purpose-spec dd { font-size: 1.55rem; }
+  .benefit-faq { padding-top: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
   .storefront *, .storefront *::before, .storefront *::after { scroll-behavior: auto !important; }
 }
