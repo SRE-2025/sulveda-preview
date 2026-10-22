@@ -32,18 +32,6 @@ document.querySelectorAll('nav a[href]').forEach((link) => {
 });
 document.querySelectorAll('[data-year]').forEach((year) => { year.textContent = new Date().getFullYear(); });
 
-const revealItems = document.querySelectorAll('.reveal');
-if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    });
-  }, { threshold: 0.12 });
-  revealItems.forEach((item) => observer.observe(item));
-} else revealItems.forEach((item) => item.classList.add('visible'));
-
 /* Existing partner and practitioner forms prepare email; they do not send it. */
 document.querySelectorAll('[data-mail-form]').forEach((form) => {
   const requiredText = form.querySelectorAll('input:not([type])[required], input[type="text"][required], textarea[required]');

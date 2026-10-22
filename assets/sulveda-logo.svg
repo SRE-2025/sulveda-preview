@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 74" role="img" aria-labelledby="title">
-  <title id="title">Sulveda Daily Gut Mints</title>
-  <g fill="none" stroke="#1d8e82" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M31 31C18 25 16 13 16 7c10 3 17 10 18 21-1 5-1 8-1 11"/>
-    <path d="M36 24C36 13 43 5 52 1c1 10-3 20-15 27-2 4-3 7-4 11"/>
-    <path d="M37 34c7-10 16-13 26-12-2 11-10 19-24 19-3 3-5 6-6 9"/>
-  </g>
-  <text x="81" y="34" fill="#143b4e" font-family="Georgia, serif" font-size="25" letter-spacing="7">SULVEDA</text>
-  <text x="82" y="55" fill="#143b4e" font-family="Arial, sans-serif" font-size="8" font-weight="700" letter-spacing="3">DAILY GUT MINTS</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 334 72" role="img" aria-labelledby="title"><title id="title">Sulveda Daily Gut Mints</title><g fill="none" stroke="#386b58" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 6)"><path d="M29 53C29 37 35 23 45 9M29 41C18 38 11 28 12 15c12 5 18 13 17 26ZM33 31C31 18 37 9 48 4c2 12-3 22-15 27ZM31 47c5-14 15-20 28-20-3 14-13 21-28 20Z"/><path d="m15 21 14 20m16-30-12 20m18 2-20 14" stroke-width="1.2"/></g><g fill="none" stroke="#193c43" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="round" transform="translate(78 15)"><path d="M19 3C14-1 1-1 1 8c0 9 19 5 19 14 0 9-14 10-20 4M35 1v18c0 14 22 14 22 0V1M74 1v28h20M110 1l11 28 11-28M169 1h-20v28h20m-20-14h16M187 1v28h7c28 0 28-28 0-28h-7ZM229 29l11-28 11 28m-18-9h14"/></g><text x="79" y="64" fill="#193c43" font-family="Arial, sans-serif" font-size="10.5" font-weight="600" letter-spacing="3.5">DAILY GUT MINTS</text></svg>
