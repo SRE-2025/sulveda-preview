@@ -1,4 +1,4 @@
-/* Shared navigation, enquiry forms, and the Sulveda shopping bag. */
+/* Shared navigation, inquiry forms, and the Sulveda shopping bag. */
 'use strict';
 
 const menuButton = document.querySelector('[data-menu-button]');
@@ -6,6 +6,7 @@ const mobileNav = document.querySelector('[data-mobile-nav]');
 const closeMenu = () => {
   if (!menuButton || !mobileNav) return;
   menuButton.setAttribute('aria-expanded', 'false');
+  menuButton.querySelector('.sr-only').textContent = 'Open navigation';
   mobileNav.classList.remove('open');
 };
 
@@ -13,6 +14,7 @@ if (menuButton && mobileNav) {
   menuButton.addEventListener('click', () => {
     const open = menuButton.getAttribute('aria-expanded') !== 'true';
     menuButton.setAttribute('aria-expanded', String(open));
+    menuButton.querySelector('.sr-only').textContent = open ? 'Close navigation' : 'Open navigation';
     mobileNav.classList.toggle('open', open);
   });
   mobileNav.querySelectorAll('a').forEach((link) => link.addEventListener('click', closeMenu));
@@ -23,6 +25,11 @@ if (menuButton && mobileNav) {
     }
   });
 }
+document.querySelectorAll('nav a[href]').forEach((link) => {
+  const destination = new URL(link.href);
+  const currentPath = window.location.pathname.replace(/\/$/, '/index.html');
+  if (!destination.hash && destination.pathname === currentPath) link.setAttribute('aria-current', 'page');
+});
 document.querySelectorAll('[data-year]').forEach((year) => { year.textContent = new Date().getFullYear(); });
 
 const revealItems = document.querySelectorAll('.reveal');
@@ -39,15 +46,18 @@ if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-mot
 
 /* Existing partner and practitioner forms prepare email; they do not send it. */
 document.querySelectorAll('[data-mail-form]').forEach((form) => {
+  const requiredText = form.querySelectorAll('input:not([type])[required], input[type="text"][required], textarea[required]');
+  requiredText.forEach((field) => field.addEventListener('input', () => field.setCustomValidity('')));
   form.addEventListener('submit', (event) => {
     event.preventDefault();
+    requiredText.forEach((field) => field.setCustomValidity(field.value.trim() ? '' : 'Please complete this field.'));
     if (!form.reportValidity()) return;
     const lines = [];
     new FormData(form).forEach((value, key) => {
       if (String(value).trim()) lines.push(key + ': ' + String(value).trim());
     });
     lines.push('', 'Prepared from the Sulveda website.');
-    const mailto = 'mailto:' + form.dataset.recipient + '?subject=' + encodeURIComponent(form.dataset.subject || 'Sulveda enquiry') + '&body=' + encodeURIComponent(lines.join('\n'));
+    const mailto = 'mailto:' + form.dataset.recipient + '?subject=' + encodeURIComponent(form.dataset.subject || 'Sulveda inquiry') + '&body=' + encodeURIComponent(lines.join('\n'));
     const status = form.querySelector('[data-form-status]');
     if (status) {
       status.textContent = 'Your email draft is ready. Complete sending in your email app; nothing has been sent by this website.';
@@ -91,13 +101,14 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
   }
 
   function writeCart(items) {
-    cart = commerce.normalize(items);
+    const nextCart = commerce.normalize(items);
     if (!storage) {
       notice('Your browser is blocking shopping-bag storage. Allow site storage to carry your selection into checkout.');
       return false;
     }
     try {
-      storage.setItem(storageKey, JSON.stringify({ version: 1, items: cart }));
+      storage.setItem(storageKey, JSON.stringify({ version: 1, items: nextCart }));
+      cart = nextCart;
       return true;
     } catch (_) {
       notice('Your bag could not be saved. Please allow site storage and try again.');
@@ -186,6 +197,8 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
     const ready = document.querySelector('[data-enquiry-ready]');
     if (form) form.hidden = false;
     if (ready) ready.hidden = true;
+    const status = document.querySelector('[data-enquiry-status]');
+    if (status) status.textContent = 'Nothing has been sent yet. Complete sending in your email app.';
   }
 
   function render() {
@@ -232,6 +245,12 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       event.preventDefault();
       if (!productForm.reportValidity()) return;
       const selected = productForm.querySelector('[name="plan"]:checked').value;
+      cart = readCart();
+      const existing = cart.find((item) => item.plan === selected);
+      if ((existing ? existing.quantity : 0) + quantity(productQuantity.value) > 10) {
+        notice('Your bag can hold up to 10 of each supply option. Reduce the quantity, edit your bag, or contact us for a bulk order.');
+        return;
+      }
       if (writeCart(commerce.add(cart, selected, productQuantity.value))) window.location.assign('cart.html');
     });
     updateProduct();
@@ -247,36 +266,37 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       const current = cart.find((item) => item.plan === id);
       if (!current) return;
       if (button.hasAttribute('data-remove-item')) {
-        writeCart(cart.filter((item) => item.plan !== id));
+        const saved = writeCart(cart.filter((item) => item.plan !== id));
         render();
-        notice(plans[id].name + ' removed from your bag.');
+        if (saved) notice(plans[id].name + ' removed from your bag.');
         const next = document.querySelector('[data-remove-item]') || document.querySelector('[data-empty-cart] a');
         if (next) next.focus();
       } else if (button.hasAttribute('data-step')) {
         const step = button.dataset.step;
-        writeCart(commerce.setQuantity(cart, id, current.quantity + Number(step)));
+        const saved = writeCart(commerce.setQuantity(cart, id, current.quantity + Number(step)));
         render();
         const replacement = cartItems.querySelector('[data-plan="' + id + '"] [data-step="' + step + '"]');
         if (replacement && !replacement.disabled) replacement.focus();
-        notice('Bag updated. Proposed subtotal ' + money(commerce.summary(cart).subtotalCents) + '.');
+        else cartItems.querySelector('[data-plan="' + id + '"] [data-item-quantity]').focus();
+        if (saved) notice('Bag updated. Proposed subtotal ' + money(commerce.summary(cart).subtotalCents) + '.');
       }
     });
     cartItems.addEventListener('change', (event) => {
       if (!event.target.matches('[data-item-quantity]')) return;
       const id = event.target.closest('[data-plan]').dataset.plan;
-      writeCart(commerce.setQuantity(cart, id, event.target.value));
+      const saved = writeCart(commerce.setQuantity(cart, id, event.target.value));
       render();
       const input = cartItems.querySelector('[data-plan="' + id + '"] [data-item-quantity]');
       if (input) input.focus();
-      notice('Bag updated. Proposed subtotal ' + money(commerce.summary(cart).subtotalCents) + '.');
+      if (saved) notice('Bag updated. Proposed subtotal ' + money(commerce.summary(cart).subtotalCents) + '.');
     });
   }
 
   document.querySelectorAll('[data-clear-cart]').forEach((button) => {
     button.addEventListener('click', () => {
-      writeCart([]);
+      const saved = writeCart([]);
       render();
-      notice('Your saved bag has been cleared.');
+      if (saved) notice('Your saved bag has been cleared.');
     });
   });
 
@@ -297,10 +317,10 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       readyText = commerce.enquiryText(cart, customer, enquiryReference);
       document.querySelector('[data-enquiry-preview]').textContent = readyText;
       const link = document.querySelector('[data-enquiry-mailto]');
-      link.href = 'mailto:' + orderEmail + '?subject=' + encodeURIComponent('Sulveda order enquiry ' + enquiryReference) + '&body=' + encodeURIComponent(readyText);
+      link.href = 'mailto:' + orderEmail + '?subject=' + encodeURIComponent('Sulveda order inquiry ' + enquiryReference) + '&body=' + encodeURIComponent(readyText);
       enquiryForm.hidden = true;
       document.querySelector('[data-enquiry-ready]').hidden = false;
-      document.querySelector('[data-enquiry-ready]').scrollIntoView({ block: 'start', behavior: 'smooth' });
+      document.querySelector('[data-enquiry-ready]').scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
       link.focus({ preventScroll: true });
     });
     document.querySelector('[data-edit-enquiry]').addEventListener('click', () => {
@@ -313,25 +333,25 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
     document.querySelector('[data-copy-enquiry]').addEventListener('click', async () => {
       const status = document.querySelector('[data-enquiry-status]');
       try {
-        await navigator.clipboard.writeText('To: ' + orderEmail + '\nSubject: Sulveda order enquiry ' + enquiryReference + '\n\n' + readyText);
+        await navigator.clipboard.writeText('To: ' + orderEmail + '\nSubject: Sulveda order inquiry ' + enquiryReference + '\n\n' + readyText);
         status.textContent = 'Copied. Paste into an email to ' + orderEmail + ' and send when ready.';
       } catch (_) {
         const range = document.createRange();
         range.selectNodeContents(document.querySelector('[data-enquiry-preview]'));
         window.getSelection().removeAllRanges();
         window.getSelection().addRange(range);
-        status.textContent = 'Your browser blocked clipboard access. The enquiry text is selected so you can copy it manually.';
+        status.textContent = 'Your browser blocked clipboard access. The inquiry text is selected so you can copy it manually.';
       }
     });
     document.querySelector('[data-download-enquiry]').addEventListener('click', () => {
-      const blob = new Blob(['To: ' + orderEmail + '\nSubject: Sulveda order enquiry ' + enquiryReference + '\n\n' + readyText], { type: 'text/plain;charset=utf-8' });
+      const blob = new Blob(['To: ' + orderEmail + '\nSubject: Sulveda order inquiry ' + enquiryReference + '\n\n' + readyText], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = 'Sulveda-' + enquiryReference + '.txt';
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      document.querySelector('[data-enquiry-status]').textContent = 'Download prepared. The file includes your enquiry and contact details; nothing has been sent.';
+      document.querySelector('[data-enquiry-status]').textContent = 'Download prepared. The file includes your inquiry and contact details; nothing has been sent.';
     });
   }
 

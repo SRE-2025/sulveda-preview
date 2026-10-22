@@ -54,7 +54,7 @@
     const cart = normalize(items);
     const totals = summary(cart);
     const lines = [
-      'SULVEDA ORDER ENQUIRY',
+      'SULVEDA ORDER INQUIRY',
       `Reference: ${reference}`,
       '',
       ...cart.map((item) => `${item.quantity} × ${plans[item.plan].name} — ${money(plans[item.plan].priceCents * item.quantity)}`),
@@ -66,7 +66,7 @@
     if (totals.recurringCents) lines.push(`Proposed renewal: ${money(totals.recurringCents)} every 30 days, plus confirmed tax and shipping.`);
     lines.push('', `Name: ${customer.name}`, `Email: ${customer.email}`, `Phone: ${customer.phone || 'Not provided'}`, `Delivery ZIP / postal code: ${customer.postal}`);
     if (customer.notes) lines.push('', `Notes: ${customer.notes}`);
-    lines.push('', 'Please confirm availability, delivery, final pricing, and purchase terms. This is an enquiry, not a completed purchase or subscription.');
+    lines.push('', 'Please confirm availability, delivery, final pricing, and purchase terms. This is an inquiry, not a completed purchase or subscription.');
     return lines.join('\n');
   }
 
