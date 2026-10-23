@@ -8,7 +8,7 @@
   try { manualOff = window.sessionStorage.getItem('sulveda-motion-v1') === 'off'; } catch (_) { /* Optional preference only. */ }
   let stopped = preference.matches || manualOff;
   root.classList.toggle('motion-paused', stopped);
-  const selectors = '.benefit-section-heading, .benefit-goals article, .comparison-heading, .comparison-table-wrap, .gut-science-layout > div, .science-purpose, .benefit-product > div, .purpose-spec, .quick-answers > div, .section-title, .choice-grid article, .doctor-grid article, .retail-proof-grid article, .principles-grid > div, .form-intro';
+  const selectors = '.benefit-section-heading, .benefit-goals article, .comparison-heading, .comparison-table-wrap, .gut-science-layout > div, .science-purpose, .benefit-product > div, .purpose-spec, .home-difference-copy, .home-mint-contrast, .quick-answers > div, .section-title, .choice-grid article, .doctor-grid article, .retail-proof-grid article, .principles-grid > div, .form-intro';
 
   function revealAll() {
     root.classList.remove('motion-ready');

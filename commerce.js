@@ -2,9 +2,9 @@
   'use strict';
 
   const plans = Object.freeze({
-    'one-time': Object.freeze({ id: 'one-time', name: 'One-time dispenser', description: '1 dispenser · 60 mints · 30 daily servings', priceCents: 2999, compareCents: 2999, dispensers: 1, recurring: false }),
-    monthly: Object.freeze({ id: 'monthly', name: 'Monthly delivery', description: '1 dispenser every 30 days · 60 mints', priceCents: 2499, compareCents: 2999, dispensers: 1, recurring: true }),
-    quarterly: Object.freeze({ id: 'quarterly', name: '90-day supply', description: '3 dispensers · 180 mints · one purchase', priceCents: 6999, compareCents: 8997, dispensers: 3, recurring: false })
+    'one-time': Object.freeze({ id: 'one-time', name: 'One-time dispenser', description: '1 dispenser · 60 mints · 30 daily servings', priceCents: 999, compareCents: 999, dispensers: 1, recurring: false }),
+    monthly: Object.freeze({ id: 'monthly', name: 'Monthly delivery', description: '1 dispenser every 30 days · 60 mints', priceCents: 999, compareCents: 999, dispensers: 1, recurring: true }),
+    quarterly: Object.freeze({ id: 'quarterly', name: '90-day supply', description: '3 dispensers · 180 mints · one purchase', priceCents: 2997, compareCents: 2997, dispensers: 3, recurring: false })
   });
 
   const hasPlan = (id) => Object.prototype.hasOwnProperty.call(plans, id);
