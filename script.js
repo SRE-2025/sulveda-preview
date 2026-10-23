@@ -119,16 +119,18 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
     document.querySelectorAll('[data-cart-count]').forEach((item) => { item.textContent = totals.packages; });
     document.querySelectorAll('.bag-link').forEach((link) => { link.setAttribute('aria-label', 'Shopping bag, ' + totals.packages + (totals.packages === 1 ? ' selection' : ' selections')); });
     document.querySelectorAll('[data-cart-subtotal], [data-cart-total]').forEach((item) => { item.textContent = money(totals.subtotalCents); });
+    document.querySelectorAll('[data-subtotal-label]').forEach((item) => { item.textContent = totals.recurringCents ? 'First-shipment subtotal' : 'Proposed subtotal'; });
     document.querySelectorAll('[data-cart-renewal]').forEach((item) => {
       item.hidden = totals.recurringCents === 0;
-      item.textContent = 'Monthly portion: ' + money(totals.recurringCents) + ' every 30 days, plus confirmed tax and shipping. No subscription starts today.';
+      const monthly = cart.find((item) => plans[item.plan].recurring);
+      item.textContent = monthly ? 'Subscription commitment: ' + commerce.subscriptionTerms(monthly.quantity) + ' No billing starts today.' : '';
     });
     const supply = document.querySelector('[data-cart-supply]');
-    if (supply) supply.textContent = totals.dispensers + (totals.dispensers === 1 ? ' dispenser' : ' dispensers') + ' · ' + totals.mints + ' mints in this selection.';
+    if (supply) supply.textContent = totals.dispensers + (totals.dispensers === 1 ? ' dispenser' : ' dispensers') + ' · ' + totals.mints + (totals.recurringCents ? ' mints in the first shipment.' : ' mints in this selection.');
     const saving = document.querySelector('[data-cart-saving]');
     if (saving) {
       saving.hidden = totals.savingsCents === 0;
-      saving.textContent = 'You save ' + money(totals.savingsCents) + ' compared with individual one-time dispensers.';
+      saving.textContent = (totals.recurringCents ? 'First-shipment savings: ' : 'You save ') + money(totals.savingsCents) + ' compared with individual one-time dispensers.';
     }
   }
 
@@ -147,7 +149,7 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       article.dataset.plan = item.plan;
       article.querySelector('[data-item-name]').textContent = plan.name;
       article.querySelector('[data-item-description]').textContent = plan.description;
-      article.querySelector('[data-item-price]').textContent = money(plan.priceCents) + (plan.recurring ? ' / delivery' : ' / selection');
+      article.querySelector('[data-item-price]').textContent = money(plan.priceCents) + (plan.recurring ? ' / month' : ' / selection');
       article.querySelector('[data-item-total]').textContent = money(plan.priceCents * item.quantity);
       const input = article.querySelector('[data-item-quantity]');
       input.value = item.quantity;
@@ -169,6 +171,15 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
     document.querySelector('[data-checkout-empty]').hidden = cart.length > 0;
     const lines = document.querySelector('[data-checkout-lines]');
     lines.replaceChildren();
+    const monthly = cart.find((item) => plans[item.plan].recurring);
+    const review = document.querySelector('[data-subscription-review]');
+    if (review) {
+      review.hidden = !monthly;
+      review.querySelector('[data-subscription-ack]').required = Boolean(monthly);
+      review.querySelector('[data-subscription-ack-copy]').textContent = monthly
+        ? 'I understand the quoted plan is ' + commerce.subscriptionTerms(monthly.quantity) + ' This is an inquiry only, not enrollment.'
+        : '';
+    }
     cart.forEach((item) => {
       const line = document.createElement('div');
       line.className = 'enquiry-line';
@@ -179,7 +190,7 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       description.textContent = plans[item.plan].description;
       text.append(name, description);
       const price = document.createElement('b');
-      price.textContent = money(plans[item.plan].priceCents * item.quantity);
+      price.textContent = money(plans[item.plan].priceCents * item.quantity) + (plans[item.plan].recurring ? ' / month' : '');
       line.append(text, price);
       lines.append(line);
     });
@@ -191,6 +202,8 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
     const ready = document.querySelector('[data-enquiry-ready]');
     if (form) form.hidden = false;
     if (ready) ready.hidden = true;
+    const acknowledgment = document.querySelector('[data-subscription-ack]');
+    if (acknowledgment) acknowledgment.checked = false;
     const status = document.querySelector('[data-enquiry-status]');
     if (status) status.textContent = 'Nothing has been sent yet. Complete sending in your email app.';
   }
@@ -222,10 +235,10 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       document.querySelector('[data-selection-description]').textContent = (dispensers * 30) + ' daily servings' + (plan.recurring ? ' per delivery' : ' total');
       document.querySelector('[data-selection-price]').textContent = money(amount * plan.priceCents);
       document.querySelectorAll('[data-sticky-price]').forEach((item) => { item.textContent = money(amount * plan.priceCents); });
-      document.querySelectorAll('[data-sticky-choice]').forEach((item) => { item.textContent = (amount > 1 ? amount + ' × ' : '') + (selected === 'quarterly' ? '90-day supply' : selected === 'monthly' ? 'Monthly delivery' : 'One dispenser'); });
-      document.querySelectorAll('[data-sticky-period]').forEach((item) => { item.textContent = plan.recurring ? 'every 30 days' : 'one purchase'; });
+      document.querySelectorAll('[data-sticky-choice]').forEach((item) => { item.textContent = (amount > 1 ? amount + ' × ' : '') + (selected === 'quarterly' ? '90-day supply' : selected === 'monthly' ? '12-month plan' : 'One dispenser'); });
+      document.querySelectorAll('[data-sticky-period]').forEach((item) => { item.textContent = plan.recurring ? '/ month · 12 months' : 'one purchase'; });
       document.querySelector('[data-plan-renewal]').textContent = plan.recurring
-        ? 'Monthly plan: ' + money(amount * plan.priceCents) + ' every 30 days. No subscription starts today.'
+        ? commerce.subscriptionTerms(amount) + ' No subscription starts today.'
         : 'One purchase. No automatic renewal.';
       productForm.querySelector('[data-product-step="-1"]').disabled = amount <= 1;
       productForm.querySelector('[data-product-step="1"]').disabled = amount >= 10;
