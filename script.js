@@ -38,31 +38,97 @@ document.querySelectorAll('nav a[href]').forEach((link) => {
 });
 document.querySelectorAll('[data-year]').forEach((year) => { year.textContent = new Date().getFullYear(); });
 
-/* Existing partner and practitioner forms prepare email; they do not send it. */
+/* Business inquiries stay on the page until the visitor chooses how to share. */
 document.querySelectorAll('[data-mail-form]').forEach((form) => {
   const requiredText = form.querySelectorAll('input:not([type])[required], input[type="text"][required], textarea[required]');
   requiredText.forEach((field) => field.addEventListener('input', () => field.setCustomValidity('')));
+  const status = form.querySelector('[data-form-status]');
+  const panel = document.createElement('section');
+  panel.className = 'enquiry-ready business-inquiry-review';
+  panel.hidden = true;
+  panel.setAttribute('aria-label', 'Review your business inquiry');
+  const heading = document.createElement('h3');
+  heading.textContent = 'Your inquiry is ready to review.';
+  heading.tabIndex = -1;
+  const instructions = document.createElement('p');
+  instructions.textContent = 'Nothing has been sent. Open an email draft or copy these details into your webmail. You can also download a copy containing the contact details you entered.';
+  const preview = document.createElement('pre');
+  preview.tabIndex = 0;
+  preview.setAttribute('aria-label', 'Prepared inquiry details');
+  const actions = document.createElement('div');
+  actions.className = 'enquiry-actions';
+  const email = document.createElement('a');
+  email.className = 'button button-dark';
+  email.textContent = 'Open email draft';
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.className = 'button button-outline';
+  copy.textContent = 'Copy inquiry';
+  const download = document.createElement('button');
+  download.type = 'button';
+  download.className = 'plain-button';
+  download.textContent = 'Download details';
+  actions.append(email, copy, download);
+  panel.append(heading, instructions, preview, actions);
+  form.append(panel);
+  let readyText = '';
+  const reset = () => {
+    if (!readyText) return;
+    readyText = '';
+    panel.hidden = true;
+    preview.textContent = '';
+    email.removeAttribute('href');
+    if (status) status.textContent = 'Details changed. Prepare your inquiry again before sharing.';
+  };
+  form.addEventListener('input', reset);
+  form.addEventListener('change', reset);
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     requiredText.forEach((field) => field.setCustomValidity(field.value.trim() ? '' : 'Please complete this field.'));
     if (!form.reportValidity()) return;
+    const subject = form.dataset.subject || 'Sulveda inquiry';
     const lines = [];
     new FormData(form).forEach((value, key) => {
       if (String(value).trim()) lines.push(key + ': ' + String(value).trim());
     });
     lines.push('', 'Prepared from the Sulveda website.');
-    const mailto = 'mailto:' + form.dataset.recipient + '?subject=' + encodeURIComponent(form.dataset.subject || 'Sulveda inquiry') + '&body=' + encodeURIComponent(lines.join('\n'));
-    const status = form.querySelector('[data-form-status]');
+    const body = lines.join('\n');
+    readyText = 'To: ' + form.dataset.recipient + '\nSubject: ' + subject + '\n\n' + body;
+    preview.textContent = readyText;
+    email.href = 'mailto:' + form.dataset.recipient + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    panel.hidden = false;
     if (status) {
-      status.textContent = 'Your email draft is ready. Complete sending in your email app; nothing has been sent by this website.';
-      status.classList.add('ready');
-      const fallback = document.createElement('a');
-      fallback.href = mailto;
-      fallback.textContent = ' Open email again';
-      status.append(fallback);
+      status.textContent = 'Your inquiry is ready below. Nothing has been sent by this website.';
     }
-    window.location.href = mailto;
+    heading.focus();
   });
+  copy.addEventListener('click', async () => {
+    if (!readyText) return;
+    const currentText = readyText;
+    try {
+      await navigator.clipboard.writeText(currentText);
+      if (status && currentText === readyText) status.textContent = 'Copied. Paste into your email app and send when ready. Nothing has been sent by this website.';
+    } catch (_) {
+      if (currentText !== readyText) return;
+      const range = document.createRange();
+      range.selectNodeContents(preview);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      if (status) status.textContent = 'Clipboard access was blocked. The inquiry is selected so you can copy it manually.';
+      preview.focus();
+    }
+  });
+  download.addEventListener('click', () => {
+    if (!readyText) return;
+    const url = URL.createObjectURL(new Blob([readyText], { type: 'text/plain;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Sulveda-business-inquiry.txt';
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    if (status) status.textContent = 'Download prepared with your contact details. Nothing has been sent.';
+  });
+  form.querySelector('[data-mail-submit]').disabled = false;
 });
 
 (function () {
@@ -365,6 +431,7 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       document.querySelector('[data-enquiry-status]').textContent = 'Download prepared. The file includes your inquiry and contact details; nothing has been sent.';
     });
+    enquiryForm.querySelector('[type="submit"]').disabled = false;
   }
 
   window.addEventListener('storage', (event) => {
