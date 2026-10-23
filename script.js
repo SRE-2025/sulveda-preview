@@ -21,8 +21,14 @@ if (menuButton && mobileNav) {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') {
       closeMenu();
-      menuButton.focus();
+      menuButton.focus({ preventScroll: true });
     }
+  });
+  document.addEventListener('click', (event) => {
+    if (menuButton.getAttribute('aria-expanded') === 'true' && !event.target.closest('.store-header')) closeMenu();
+  });
+  window.matchMedia('(min-width: 821px)').addEventListener('change', (event) => {
+    if (event.matches) closeMenu();
   });
 }
 document.querySelectorAll('nav a[href]').forEach((link) => {
@@ -215,6 +221,9 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       document.querySelector('[data-product-quantity-note]').textContent = dispensers + (dispensers === 1 ? ' dispenser' : ' dispensers') + (plan.recurring ? ' per delivery' : ' total');
       document.querySelector('[data-selection-description]').textContent = (dispensers * 30) + ' daily servings' + (plan.recurring ? ' per delivery' : ' total');
       document.querySelector('[data-selection-price]').textContent = money(amount * plan.priceCents);
+      document.querySelectorAll('[data-sticky-price]').forEach((item) => { item.textContent = money(amount * plan.priceCents); });
+      document.querySelectorAll('[data-sticky-choice]').forEach((item) => { item.textContent = (amount > 1 ? amount + ' × ' : '') + (selected === 'quarterly' ? '90-day supply' : selected === 'monthly' ? 'Monthly delivery' : 'One dispenser'); });
+      document.querySelectorAll('[data-sticky-period]').forEach((item) => { item.textContent = plan.recurring ? 'every 30 days' : 'one purchase'; });
       document.querySelector('[data-plan-renewal]').textContent = plan.recurring
         ? 'Monthly plan: ' + money(amount * plan.priceCents) + ' every 30 days. No subscription starts today.'
         : 'One purchase. No automatic renewal.';
@@ -237,9 +246,11 @@ document.querySelectorAll('[data-mail-form]').forEach((form) => {
       const existing = cart.find((item) => item.plan === selected);
       if ((existing ? existing.quantity : 0) + quantity(productQuantity.value) > 10) {
         notice('Your bag can hold up to 10 of each supply option. Reduce the quantity, edit your bag, or contact us for a bulk order.');
+        document.querySelector('[data-cart-notice]').scrollIntoView({ block: 'center', behavior: 'auto' });
         return;
       }
       if (writeCart(commerce.add(cart, selected, productQuantity.value))) window.location.assign('cart.html');
+      else document.querySelector('[data-cart-notice]').scrollIntoView({ block: 'center', behavior: 'auto' });
     });
     updateProduct();
   }
